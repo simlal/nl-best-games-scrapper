@@ -21,6 +21,9 @@ With node installed, run `npm install` to install the dependencies (including ty
 - Change the `romsDir` to the directory where your roms are located
 - Keep the `fs.promises.unlink()` commented out for a dry run or uncomment to delete the file matches
 
-3. Run `ts-node bestGamesFetcher.ts` to get the list of games and/or list of deleted files from your rom directory
+3. Run `ts-node bestGamesFetcher.ts --help` to see the options:
+
+- `--trimRoms` will remove the roms not found with a partial match from the list
+- No options will just print the list of roms found and save to a file
 
 **See the base example with snes already pushed on the repo**

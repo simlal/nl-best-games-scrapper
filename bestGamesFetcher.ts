@@ -5,7 +5,11 @@ import * as dotenv from "dotenv";
 import { get } from "https";
 import { load } from "cheerio";
 
-dotenv.config()
+// optional trimRoms arg
+const trimRomsArg: string = "--trimRoms";
+
+// load env variables
+dotenv.config();
 
 // dirs from dotenv
 const selectConsole = "nintendo_snes";    //*USE REAL NAME OF YOUR DIR WITH YOUR ROMS
@@ -26,11 +30,33 @@ const urls: Array<string> = [
     baseUrl + "?page=4",
     baseUrl + "?page=5"
 ]
-
 // unique css selector to fetch gameName
 //*to change according to selector on site scrapped
 const cssSelector: string = "h2 a";
 
+// Manage optional trimRoms arg
+function processArg() {
+    if (process.argv.length > 3) {
+        console.log("Too many arguments, only one optional argument allowed");
+        process.exit(1);
+    }
+
+    
+    if (process.argv[2] === "--help" && process.argv.length === 3) {
+        console.log("Usage: node bestGamesFetcher.ts [trimRoms]");
+        console.log("Optional argument: trimRoms - deletes roms not found in bestGamesList with vague matching");
+        process.exit(1);
+    } else if (process.argv[2] != trimRomsArg && process.argv.length === 3) {
+        console.log("Invalid argument, enter '--trimRoms' to trim roms using vague matching of fetched bestGamesList");
+        process.exit(1);
+    } else if (process.argv[2] === trimRomsArg && process.argv.length === 3) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Fetch data for a single bestOf url
 function getDocument(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
       get(url, (res) => {
@@ -76,6 +102,15 @@ async function main(trimRoms: boolean): Promise<void> {
     const bestGamesList = await fetchBestGames();
     console.log(bestGamesList)
 
+    // Write results to file
+    const resultsFileName: string = "bestGamesList.txt"
+
+
+    fs.writeFile(path.join(".", resultsFileName), bestGamesList.join("\n"), err => {
+        if (err) throw err;
+        console.log(`file ${resultsFileName} saved!`)
+    });
+
     if (trimRoms && consoleDir) {
         // Convert game items to normalized arr
         const normBestGamesList = bestGamesList.map(game => {
@@ -112,5 +147,5 @@ async function main(trimRoms: boolean): Promise<void> {
     }
 }
 
-const trimRoms: boolean = true
-main(trimRoms);
+main(processArg());
+
