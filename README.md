@@ -1,7 +1,7 @@
-# Best Games web scrapper
+# Nintendo Life Best Games web scrapper and rom cleaner
 
 ## Description
-This is a web scrapper that will get the listed top games from any website. I use NintendoLife for my examples since their top50 structures are kept accross consoles.
+This is a web scrapper that will get the listed top games from NintendoLife. I used a Top 50 best SNES for my example since but their top50 structure is similar accross consoles.
 
 With the trimRoms flag turned on, will remove the roms not found with a partial match from the list.
 
